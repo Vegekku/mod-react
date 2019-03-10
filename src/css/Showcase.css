@@ -1,0 +1,12 @@
+.showcase__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 14em);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.showcase__item:hover {
+  border: solid 2px white;
+  padding: 0;
+}
