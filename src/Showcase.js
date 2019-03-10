@@ -10,13 +10,14 @@ const MOVIES = Array.from({length: 10}).map((_, index) => ({
 }))
 
 const Showcase = (props) => {
+  const movies = props.movies || MOVIES
   return (
     <div className='showcase'>
       <h2 className='showcase__title'>{props.children}</h2>
       <button>{'<'}</button>
       <ul className='showcase__list'>
         {
-          MOVIES.map(item =>
+          movies.map(item =>
             <li key={item.id} className='showcase__item'>
               <Movie movie={item} addable={props.addable}/>
             </li>

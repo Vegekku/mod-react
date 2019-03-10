@@ -4,6 +4,7 @@ import {Link} from 'react-router-dom'
 import Modal from './Modal'
 
 import './css/Movie.css'
+import { generateKeyPair } from 'crypto';
 
 class Movie extends React.Component {
   state = {
@@ -18,6 +19,7 @@ class Movie extends React.Component {
     const {movie} = this.props
     const background = {
       backgroundImage: `url(https://image.tmdb.org/t/p/w300${movie.backdrop_path})`,
+      backgroundColor: 'grey',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       backgroundPosition: 'center'
