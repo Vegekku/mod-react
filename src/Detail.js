@@ -1,31 +1,52 @@
 import React from 'react'
 
-const SAMPLE_DETAILS = {
-  id: 1,
-  homepage: 'http://www.dbmovie-20th.com/',
-  original_title: 'ドラゴンボール超スーパー ブロリー',
-  overview: 'La Tierra vive en paz después de que concluyó el Torneo de Fuerza. Luego de darse cuenta que los Universos aún tienen muchos guerreros poderosos, Gokú pasa todos los días entrenando para alcanzar un nivel de pelea mayor.  Un día Gokú y Vegeta enfrentan a un nuevo saiyajin llamado “Broly”, a quien nunca antes han visto. Supuestamente, los saiyajin fueron arrasados durante la destrucción del planeta Vegeta; entonces ¿qué hace uno de ellos en la Tierra?  Este encuentro entre tres saiyajin, que han tenido destinos diferentes, se convierte en una batalla estupenda, con Freezer (que ha vuelto del infierno) atrapado en medio de ellos.',
-  poster_path: '/4urPfAgAWyimfKghVWRvVwD88Cz.jpg',
-  backdrop_path: '/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg',
-  release_date: '2018-12-14',
-  budget: 8500000,
-  revenue: 89617139,
-  runtime: 100,
-  title: 'Dragon Ball Super: Broly',
-  vote_average: 7.4,
-  tagline: ''
+class Detail extends React.Component {
+  state = {
+    loading: true,
+    movie_id: this.props.match.params.movie_id
+  }
+  async componentDidMount() {
+    try {
+      const response = await fetch(`https://api.themoviedb.org/3/movie/${this.state.movie_id}?api_key=a7344235cf71916f964295b0d4d6133a&language=es-ES`)
+      const movie = await response.json()
+      this.setState({movie})
+    } catch (error){
+      this.setState({error})
+    } finally {
+      this.setState({ loading: false})
+    }
+  }
+  render() {
+    const {error, loading, movie} = this.state
+
+    if (error) {
+      return <p>Error</p>
+    }
+
+    if (loading) {
+      return <p>Loading...</p>
+    }
+
+    if (movie.status_code) {
+      return <p>{movie.status_message}</p>
+    }
+
+    return (
+      <div className='detail'>
+        <img className='detail__poster' src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`} alt={movie.title}></img>
+        <h1 className='detail__title'>{movie.title}</h1>
+        {
+          movie.tagline !== '' &&
+          <h2 className='detail__tagline'>{movie.tagline}</h2>
+        }
+        <h2 className='detail__original_title'>{movie.original_title}</h2>
+        <p>{movie.release_date}</p>
+        <p>{movie.overview}</p>
+        <a href={movie.homepage}>{movie.homepage}</a>
+      </div>
+    )
+  }
 }
 
-export default props =>
-  <div className='detail'>
-    <img className='detail__poster' src={`https://image.tmdb.org/t/p/w300${SAMPLE_DETAILS.poster_path}`} alt={SAMPLE_DETAILS.title}></img>
-    <h1 className='detail__title'>{SAMPLE_DETAILS.title}</h1>
-    {
-      SAMPLE_DETAILS.tagline !== '' &&
-      <h2 className='detail__tagline'>{SAMPLE_DETAILS.tagline}</h2>
-    }
-    <h2 className='detail__original_title'>{SAMPLE_DETAILS.original_title}</h2>
-    <p>{SAMPLE_DETAILS.release_date}</p>
-    <p>{SAMPLE_DETAILS.overview}</p>
-    <a href={SAMPLE_DETAILS.homepage}>{SAMPLE_DETAILS.homepage}</a>
-  </div>
+export default Detail
+  

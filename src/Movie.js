@@ -4,7 +4,6 @@ import {Link} from 'react-router-dom'
 import Modal from './Modal'
 
 import './css/Movie.css'
-import { generateKeyPair } from 'crypto';
 
 class Movie extends React.Component {
   state = {
