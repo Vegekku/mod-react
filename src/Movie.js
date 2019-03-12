@@ -53,7 +53,6 @@ class Movie extends React.Component {
       </div>
     )
   }
-  // TODO toogleModal
   showModal(modal) {
     // TODO Solo puede mostrarse un modal, por lo que este estado debe estar en un componente superior
     this.setState({showingModal: modal})
@@ -62,11 +61,37 @@ class Movie extends React.Component {
     this.setState({showingModal: false})
   }
   addToCollection({select, input}) {
-    console.log(input)
+    const collections = JSON.parse(localStorage.getItem('collections')) || []
+
+    if (input !== ''){
+      const collection = {
+        title: String(input),
+        movies: [this.props.movie.id],
+        createdAt: new Date()
+      }
+      console.log(collection)
+      // localStorage.setItem(
+      //   'collections',
+      //   JSON.stringify({...collections,collection})
+      // )
+    } else if(select !== undefined) {
+      console.log(select)
+    }
+
+    
     this.hideModal()
   }
   scoreMovie({input}) {
-    console.log(input)
+    const scores = JSON.parse(localStorage.getItem('scores')) || {}
+
+    scores[this.props.movie.id] = {
+      value: input
+    }
+
+    localStorage.setItem(
+      'scores',
+      JSON.stringify(scores)
+    )
     this.hideModal()
   }
 }

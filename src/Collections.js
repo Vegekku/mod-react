@@ -4,8 +4,14 @@ import Showcase from './Showcase';
 const COLLECTIONS = Array.from({length: 5}).map((_, index) => ({
   id: index,
   title: `Ejemplo ${index}`,
+  movies: Array.from({length: 10}).map((_, index) => ( {
+    id: index,
+    backdrop_path: '/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg',
+    title: 'Dragon Ball Super: Broly'
+  }))
 }))
 // TODO Currently getting page 1. Add pagination. Usefull fields from API: page, total_results, total_pages
+// TODO Keep searchedValue if show movie details
 const API_SEARCH = 'https://api.themoviedb.org/3/search/movie?api_key=a7344235cf71916f964295b0d4d6133a&language=es-Es&query='
 const API_DISCOVER = 'https://api.themoviedb.org/3/discover/movie?api_key=a7344235cf71916f964295b0d4d6133a&language=es-ES&sort_by=popularity.desc'
 class Collection extends React.Component {
@@ -14,7 +20,8 @@ class Collection extends React.Component {
     search: [],
     errorSearching: false,
     discover: [],
-    errorDiscovering: false
+    errorDiscovering: false,
+    collections: []
   }
   constructor() {
     super()
@@ -31,12 +38,17 @@ class Collection extends React.Component {
     } finally {
       this.setState({ discovering: false})
     }
+
+    // TODO En caso de no existir, []
+    const collections = (JSON.parse(localStorage.getItem('collections')) || COLLECTIONS);
+    this.setState({collections})
   }
   // TODO Pass discovering and errorDiscovering texts as Showcase children, and controlling in showcase null movies
   render() {
     const {
       search, searchedValue, errorSearching, searching,
-      discover, errorDiscovering, discovering
+      discover, errorDiscovering, discovering,
+      collections
     } = this.state
     return (
       <div className='collections'>
@@ -64,8 +76,8 @@ class Collection extends React.Component {
         }
         
         {
-          COLLECTIONS.map(collection =>
-            <Showcase key={collection.id}>
+          collections.map(collection =>
+            <Showcase key={collection.id} movies={collection.movies}>
               {collection.title}
             </Showcase>
           )

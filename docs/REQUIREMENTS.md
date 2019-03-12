@@ -16,6 +16,27 @@
 4. &#9744;Crear (y borrar) colecciones y modificarlas añadiendo o borrando películas
 5. &#9745;Vista detalle de película
 
+## Estructura localStorage
+
+```json
+{
+  user: {
+    scores: [
+      1: {
+        value: 10
+      }
+    ],
+    collections: [
+      1: {
+        title: 'Example',
+        movies: [1],
+        created_at: date
+      }
+    ]
+  }
+}
+```
+
 ## Usos de API
 
 ```

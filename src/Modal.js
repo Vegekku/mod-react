@@ -2,6 +2,7 @@ import React from 'react'
 
 import './css/Modal.css'
 
+// TODO Catch from localStorage
 const COLLECTIONS = Array.from({length: 5}).map((_, index) => ({
   id: index,
   title: `Ejemplo ${index}`,
@@ -17,7 +18,7 @@ class Modal extends React.Component {
     this.setInput = this.setInput.bind(this)
   }
   render() {
-    const {input} = this.state
+    const {input, disabled} = this.state
     return (
       <form className='modal' onSubmit={event => event.preventDefault()}>
         <h4 className='modal__title'>{this.props.children}</h4>
@@ -26,7 +27,8 @@ class Modal extends React.Component {
           ? (
             <label>
               Select
-              <select className='modal__select' onChange={this.setSelect}>
+              <select className='modal__select' onChange={this.setSelect} disabled={disabled}>
+                <option key='select_option' value='select_option' selected disabled>Select option</option>
               {
                 COLLECTIONS.map(collection => <option key={collection.id} value={collection.id}>{collection.title}</option>)
               }
@@ -52,7 +54,12 @@ class Modal extends React.Component {
     this.setState({select: event.target.value})
   }
   setInput(event) {
-    this.setState({input: event.target.value})
+    const inputValue = event.target.value
+    let disabled = false
+    if (inputValue !== '') {
+      disabled= true
+    }
+    this.setState({input: event.target.value, disabled})
   }
   close() {
     this.props.onClose()

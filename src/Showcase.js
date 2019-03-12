@@ -3,14 +3,8 @@ import Movie from './Movie';
 
 import './css/Showcase.css'
 
-const MOVIES = Array.from({length: 10}).map((_, index) => ({
-  id: index,
-  backdrop_path: '/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg',
-  title: 'Dragon Ball Super: Broly'
-}))
-
 const Showcase = (props) => {
-  const movies = props.movies || MOVIES
+  const movies = props.movies || []
   return (
     <div className='showcase'>
       <h2 className='showcase__title'>{props.children}</h2>
