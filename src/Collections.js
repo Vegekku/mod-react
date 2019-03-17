@@ -1,15 +1,8 @@
 import React from 'react'
 import Showcase from './Showcase';
+import Modal from './Modal';
+import UserContext from './UserContext';
 
-const COLLECTIONS = Array.from({length: 5}).map((_, index) => ({
-  id: index,
-  title: `Ejemplo ${index}`,
-  movies: Array.from({length: 10}).map((_, index) => ( {
-    id: index,
-    backdrop_path: '/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg',
-    title: 'Dragon Ball Super: Broly'
-  }))
-}))
 // TODO Currently getting page 1. Add pagination. Usefull fields from API: page, total_results, total_pages
 // TODO Keep searchedValue if show movie details
 const API_SEARCH = 'https://api.themoviedb.org/3/search/movie?api_key=a7344235cf71916f964295b0d4d6133a&language=es-Es&query='
@@ -21,7 +14,6 @@ class Collection extends React.Component {
     errorSearching: false,
     discover: [],
     errorDiscovering: false,
-    collections: []
   }
   constructor() {
     super()
@@ -38,51 +30,61 @@ class Collection extends React.Component {
     } finally {
       this.setState({ discovering: false})
     }
-
-    // TODO En caso de no existir, []
-    const collections = (JSON.parse(localStorage.getItem('collections')) || COLLECTIONS);
-    this.setState({collections})
   }
   // TODO Pass discovering and errorDiscovering texts as Showcase children, and controlling in showcase null movies
   render() {
     const {
       search, searchedValue, errorSearching, searching,
-      discover, errorDiscovering, discovering,
-      collections
+      discover, errorDiscovering, discovering
     } = this.state
     return (
-      <div className='collections'>
-        <form onSubmit={event => event.preventDefault()}>
-          <input type='search' placeholder='Search...' onKeyUp={this.search}></input>
-        </form>
+      <UserContext.Consumer>
         {
-          searching
-          ? <p>Searching by {searchedValue}...</p>
-          : (errorSearching === false
-            ? (searchedValue !== '' &&
-                <Showcase key={`search`} addable={true} movies={search}>{`Searching by ${searchedValue}`}</Showcase>
-            )
-            : <p>Error searching</p>
-          )
-          
+          ({
+            showingModal, hideModal,
+            addToCollection, scoreMovie,
+            collections
+          }) =>
+            <div className='collections'>
+              {
+                showingModal === 'add' &&
+                <Modal type={showingModal} onSubmit={addToCollection} onClose={hideModal} selectItems={collections}>Add to</Modal>
+              }
+              {
+                showingModal === 'score' &&
+                  <Modal type={showingModal} onSubmit={scoreMovie}  onClose={hideModal} inputText='Values from 0 to 100'>Score</Modal>
+              }
+              <form onSubmit={event => event.preventDefault()}>
+                <input type='search' placeholder='Search...' onKeyUp={this.search}></input>
+              </form>
+              {
+                searching
+                ? <p>Searching by {searchedValue}...</p>
+                : (errorSearching === false
+                  ? (searchedValue !== '' &&
+                      <Showcase key={`search`} addable={true} movies={search}>{`Searching by ${searchedValue}`}</Showcase>
+                  )
+                  : <p>Error searching</p>
+                )
+              }
+              {
+                discovering
+                ? <p>Loading discovers...</p>
+                : (errorDiscovering === false
+                  ? <Showcase key={`discover`} addable={true} movies={discover}>Discover</Showcase>
+                  : null
+                )
+              }
+              {
+                collections.map(collection =>
+                  <Showcase key={collection.id} movies={collection.movies}>
+                    {collection.title}
+                  </Showcase>
+                )
+              }
+            </div>
         }
-        {
-          discovering
-          ? <p>Loading discovers...</p>
-          : (errorDiscovering === false
-            ? <Showcase key={`discover`} addable={true} movies={discover}>Discover</Showcase>
-            : null
-          )
-        }
-        
-        {
-          collections.map(collection =>
-            <Showcase key={collection.id} movies={collection.movies}>
-              {collection.title}
-            </Showcase>
-          )
-        }
-      </div>
+      </UserContext.Consumer>
     )
   }
   async search(event) {

@@ -1,10 +1,21 @@
 .modal {
-  background-color: rgba(255, 255, 255, .5);
+  background-color: rgba(0, 0, 0, .9);
+  width: 100%;
+  padding-top: 40vh;
+  position: fixed;
+  height: 100vh;
+}
+.modal__form {
   text-align: center;
-  width: 15rem;
-  padding: 1rem;
   border-radius: 5px;
+  background-color: rgb(177, 177, 177);
+  width: 50%;
+  margin: 0 auto;
+  max-width: calc(360px - 1rem);
+  min-width: calc(300px - 1rem);
+  padding: 1rem;
 }
 .modal__input {
   display: block;
+  margin: 0 auto;
 }

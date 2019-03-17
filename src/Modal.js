@@ -2,15 +2,10 @@ import React from 'react'
 
 import './css/Modal.css'
 
-// TODO Catch from localStorage
-const COLLECTIONS = Array.from({length: 5}).map((_, index) => ({
-  id: index,
-  title: `Ejemplo ${index}`,
-}))
-
 class Modal extends React.Component {
   state = {
-    input: ''
+    input: '',
+    select: ''
   }
   constructor() {
     super()
@@ -18,36 +13,38 @@ class Modal extends React.Component {
     this.setInput = this.setInput.bind(this)
   }
   render() {
-    const {input, disabled} = this.state
+    const {input, select, disabled} = this.state
     return (
-      <form className='modal' onSubmit={event => event.preventDefault()}>
-        <h4 className='modal__title'>{this.props.children}</h4>
-        {
-          this.props.type === 'add'
-          ? (
-            <label>
-              Select
-              <select className='modal__select' onChange={this.setSelect} disabled={disabled}>
-                <option key='select_option' value='select_option' selected disabled>Select option</option>
-              {
-                COLLECTIONS.map(collection => <option key={collection.id} value={collection.id}>{collection.title}</option>)
-              }
-              </select>
-            </label>
-          )
-          : (
-            <p>
-              Value
-            </p>
-          )
-        }
-        <label>
-          Input text
-          <input type='text' className='modal__input' value={input} onChange={this.setInput} />
-        </label>
-        <button onClick={this.close.bind(this)}>X</button>
-        <button className='modal__button' onClick={this.save.bind(this)}>Save</button>
-      </form>
+      <div className='modal'>
+        <form className='modal__form' onSubmit={event => event.preventDefault()}>
+          <h4 className='modal__title'>{this.props.children}</h4>
+          {
+            this.props.type === 'add'
+            ? (
+              <label>
+                Select
+                <select className='modal__select' onChange={this.setSelect} disabled={disabled} value={select}>
+                  <option key='select_option' value='' disabled>Select option</option>
+                {
+                  this.props.selectItems.map(item => <option key={item.id} value={item.id}>{item.title}</option>)
+                }
+                </select>
+              </label>
+            )
+            : (
+              <p>
+                Value
+              </p>
+            )
+          }
+          <label>
+            {this.props.inputText}
+            <input type='text' className='modal__input' value={input} onChange={this.setInput} />
+          </label>
+          <button onClick={this.close.bind(this)}>X</button>
+          <button className='modal__button' onClick={this.save.bind(this)}>Save</button>
+        </form>
+      </div>
     )
   }
   setSelect(event) {
