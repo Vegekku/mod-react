@@ -1,0 +1,47 @@
+.movie {
+  padding: 3.5rem 0;
+  background-color: grey;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  max-height: 3rem;
+  text-align: center;
+}
+.movie__title {
+  margin-top: 0;
+  color: white;
+  text-shadow: 0 0 5px black;
+}
+button {
+  color: white;
+  font-weight: bold;
+  border-radius: 50%;
+}
+.movie__button__add {
+  border: 1px solid green;
+  background-color: green;
+}
+.movie__button__add:hover {
+  background-color: darkgreen;
+}
+.movie__button__show {
+  border: 1px solid royalblue;
+  background-color: royalblue;
+}
+.movie__button__show:hover {
+  background-color: darkblue;
+}
+.movie__button__unadd {
+  border: 1px solid red;
+  background-color: red;
+}
+.movie__button__unadd:hover {
+  background-color: darkred;
+}
+.movie__button__score {
+  border: 1px solid orange;
+  background-color: orange;
+}
+.movie__button__score:hover {
+  background-color: darkorange;
+}
