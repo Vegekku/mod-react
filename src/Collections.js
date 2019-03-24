@@ -3,6 +3,8 @@ import Showcase from './Showcase';
 import Modal from './Modal';
 import UserContext from './UserContext';
 
+import './css/Search.css'
+
 // TODO Currently getting page 1. Add pagination. Usefull fields from API: page, total_results, total_pages
 // TODO Keep searchedValue if show movie details
 const API_SEARCH = 'https://api.themoviedb.org/3/search/movie?api_key=a7344235cf71916f964295b0d4d6133a&language=es-Es&query='
@@ -41,9 +43,9 @@ class Collection extends React.Component {
       <UserContext.Consumer>
         {
           ({
-            showingModal, hideModal,
-            addToCollection, scoreMovie,
-            collections
+            showingModal, hideModal, movieInModal,
+            addToCollection, scoreMovie, removeCollection,
+            collections, scores
           }) =>
             <div className='collections'>
               {
@@ -52,10 +54,10 @@ class Collection extends React.Component {
               }
               {
                 showingModal === 'score' &&
-                  <Modal type={showingModal} onSubmit={scoreMovie}  onClose={hideModal} inputText='Values from 0 to 100'>Score</Modal>
+                  <Modal type={showingModal} onSubmit={scoreMovie}  onClose={hideModal} currentScore={scores[movieInModal] && scores[movieInModal].value} inputText='Values from 0 to 100'>Score</Modal>
               }
-              <form onSubmit={event => event.preventDefault()}>
-                <input type='search' placeholder='Search...' onKeyUp={this.search}></input>
+              <form className='searcher' onSubmit={event => event.preventDefault()}>
+                <input className='searcher__input' type='search' placeholder='Search...' onKeyUp={this.search}></input>
               </form>
               {
                 searching
@@ -77,7 +79,7 @@ class Collection extends React.Component {
               }
               {
                 collections.map(collection =>
-                  <Showcase key={collection.id} movies={collection.movies}>
+                  <Showcase key={collection.id} collectionId={collection.id} movies={collection.movies} removeCollection={removeCollection}>
                     {collection.title}
                   </Showcase>
                 )

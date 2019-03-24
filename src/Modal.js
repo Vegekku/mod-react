@@ -16,7 +16,7 @@ class Modal extends React.Component {
     const {input, select, disabled} = this.state
     return (
       <div className='modal'>
-        <form className='modal__form' onSubmit={event => event.preventDefault()}>
+        <form className='modal__form' onSubmit={this.save.bind(this)}>
           <h4 className='modal__title'>{this.props.children}</h4>
           {
             this.props.type === 'add'
@@ -33,7 +33,7 @@ class Modal extends React.Component {
             )
             : (
               <p>
-                Value
+                Current Value: {this.props.currentScore}
               </p>
             )
           }
@@ -41,8 +41,8 @@ class Modal extends React.Component {
             {this.props.inputText}
             <input type='text' className='modal__input' value={input} onChange={this.setInput} />
           </label>
-          <button onClick={this.close.bind(this)}>X</button>
-          <button className='modal__button' onClick={this.save.bind(this)}>Save</button>
+          <button type='button' className='modal__cancel' onClick={this.close.bind(this)}>X</button>
+          <button type='submit' className='modal__save'>Save</button>
         </form>
       </div>
     )
@@ -61,7 +61,8 @@ class Modal extends React.Component {
   close() {
     this.props.onClose()
   }
-  save() {
+  save = event => {
+    event.preventDefault()
     const {select, input} = this.state
     this.props.onSubmit({select,input})
   }

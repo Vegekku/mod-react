@@ -9,26 +9,23 @@ class Movie extends React.Component {
     const {movie} = this.props
     const background = {
       backgroundImage: `url(https://image.tmdb.org/t/p/w300${movie.backdrop_path})`,
-      backgroundColor: 'grey',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
+      
     }
     const addable = Boolean(this.props.addable) || false
     return (
       <UserContext.Consumer>
         {
-          ({showModal}) =>
+          ({showModal, removeFromCollection}) =>
             <div className='movie' style={background}>
               <h3 className='movie__title'>{movie.title}</h3>
               {
                 addable === true
                   ? (
-                    <button className='movie__button__add' onClick={() => showModal('add',movie.id)}>Add</button>
+                    <button className='movie__button__add' onClick={() => showModal('add',movie.id)}>+</button>
                   )
                   : (
                     <>
-                      <button className='movie__button__unadd'>Unadd</button>
+                      <button className='movie__button__unadd' onClick={() => removeFromCollection(this.props.collectionId,movie.id)}>-</button>
                       <button className='movie__button__score' onClick={() => showModal('score',movie.id)}>Score</button>
                     </>
                   )
@@ -39,7 +36,6 @@ class Movie extends React.Component {
             </div>
         }
       </UserContext.Consumer>
-      
     )
   }
 }

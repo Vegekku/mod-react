@@ -3,35 +3,26 @@ import React from 'react'
 import Routes from './Routes'
 import UserContext from './UserContext';
 
-// TODO Catch from localStorage
-const COLLECTIONS = Array.from({length: 5}).map((_, index) => ({
-  id: index,
-  title: `Ejemplo ${index}`,
-  movies: Array.from({length: 10}).map((_, m_index) => ( {
-    id: m_index,
-    backdrop_path: '/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg',
-    title: 'Dragon Ball Super: Broly'
-  }))
-}))
-
 export default class extends React.Component {
   state = {
-    // TODO scores can be not neccessary as state
     scores: JSON.parse(localStorage.getItem('scores')) || {},
-    collections: JSON.parse(localStorage.getItem('collections')) || COLLECTIONS,
+    collections: JSON.parse(localStorage.getItem('collections')) || [],
     showingModal: false,
     movieInModal: false
   }
   render() {
     return (
       <UserContext.Provider value={{
-        // scores: this.state.scores,
+        scores: this.state.scores,
         collections: this.state.collections,
         showingModal: this.state.showingModal,
+        movieInModal: this.state.movieInModal,
         showModal: this.showModal,
         hideModal: this.hideModal,
         addToCollection: this.addToCollection,
+        removeFromCollection: this.removeFromCollection,
         scoreMovie: this.scoreMovie,
+        removeCollection: this.removeCollection,
       }}>
         <Routes />
       </UserContext.Provider>
@@ -45,37 +36,64 @@ export default class extends React.Component {
   hideModal = () => {
     this.setState({showingModal: false, movieInModal: false})
   }
-  addToCollection = ({select, input}) => {
-    const {collections, movieInModal} = this.state
-    // TODO get movie data
-    if (input !== ''){
-      const collection = {
-        id: collections.length,
-        title: String(input),
-        movies: [{
-          id: movieInModal,
-          backdrop_path: '/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg',
-          title: 'Dragon Ball Super: Broly'
-        }],
-        createdAt: new Date()
+  _getMovieData = async (movieId) => {
+    const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=a7344235cf71916f964295b0d4d6133a&language=es-ES`)
+    const movie = await response.json()
+    return {id: movie.id, backdrop_path: movie.backdrop_path, title: movie.title}
+  }
+  addToCollection = async ({select, input}) => {
+    if (input !== '' || select !== undefined) {
+      const collections = [...this.state.collections]
+      const {movieInModal} = this.state
+      const movie = await this._getMovieData(movieInModal)
+
+      if (input !== ''){
+        const collection = {
+          id: collections.length,
+          title: String(input),
+          movies: [movie],
+          createdAt: new Date()
+        }
+
+        // https://www.robinwieruch.de/react-state-array-add-update-remove/
+        const newList = [collection, ...collections]
+        this.setState({collections: newList})
+
+        localStorage.setItem(
+          'collections',
+          JSON.stringify(newList)
+        )
+      } else if(select !== undefined) {
+        const collection = collections.find(collection => collection.id === Number(select))
+
+        if (collection.movies.find(movie => movie.id === Number(movieInModal)) === undefined) {
+          collection.movies = [movie, ...collection.movies]
+          
+          localStorage.setItem(
+            'collections',
+            JSON.stringify(collections)
+          )
+        }
       }
-      // https://www.robinwieruch.de/react-state-array-add-update-remove/
-      const newList = [collection, ...collections]
-      this.setState({collections: newList})
-      // collections = []
-      // this.setState()
-      // localStorage.setItem(
-      //   'collections',
-      //   JSON.stringify({...collections, collection})
-      // )
-    } else if(select !== undefined) {
-      console.log(select)
     }
 
     this.hideModal()
   }
+  removeFromCollection = (collectionId, movieId) => {
+    // https://stackoverflow.com/questions/36326612/delete-item-from-state-array-in-react
+    const collections = [...this.state.collections]
+    const collection = collections.find(collection => collection.id === collectionId)
+    const movieIndex = collection.movies.findIndex(movie => movie.id === movieId)
+
+    collection.movies.splice(movieIndex,1)
+    this.setState({collections})
+    
+    localStorage.setItem(
+      'collections',
+      JSON.stringify(collections)
+    )
+  }
   scoreMovie = ({input}) => {
-    // const scores = JSON.parse(localStorage.getItem('scores')) || {}
     const parseInput = parseInt(input)
     const {scores, movieInModal} = this.state
     if (movieInModal !== false) {
@@ -90,6 +108,18 @@ export default class extends React.Component {
         this.hideModal()
       }
     }
+  }
+  removeCollection = (collectionId) => {
+    const collections = [...this.state.collections]
+    const collectionIndex = collections.findIndex(collection => collection.id === collectionId)
+
+    collections.splice(collectionIndex,1)
+    this.setState({collections})
+
+    localStorage.setItem(
+      'collections',
+      JSON.stringify(collections)
+    )
   }
 }
   

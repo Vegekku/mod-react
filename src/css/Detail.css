@@ -1,0 +1,18 @@
+.detail {
+  color: white;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: 'image text';
+  padding: 1rem;
+}
+.detail__poster {
+  grid-area: image;
+}
+.detail__content {
+  grid-area: text;
+}
+@media only screen and (max-width: 768px) {
+  .detail {
+    display: block;
+  }
+}

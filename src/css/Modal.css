@@ -4,6 +4,7 @@
   padding-top: 40vh;
   position: fixed;
   height: 100vh;
+  z-index: 1;
 }
 .modal__form {
   text-align: center;
@@ -18,4 +19,12 @@
 .modal__input {
   display: block;
   margin: 0 auto;
+}
+.modal__cancel {
+  background-color: red;
+  border-color: red;
+}
+.modal__save {
+  background-color: green;
+  border-color: green;
 }
